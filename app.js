@@ -1,20 +1,40 @@
-const express = require('express');
-const authRoutes = require('./routes/auth-routes');
 const PORT = process.env.PORT || 5000;
 
 
+
+const express = require('express');
+const authRoutes = require('./routes/auth-routes');
+const passportSetup = require('./config/passport-setup');
+const mongoose = require('mongoose');
+const keys = require('./config/keys');
+const cookieSession = require('cookie-session');
+const passport = require('passport');
 const app = express();
 
+// set view engine
+app.set('view engine', 'ejs');
 
-// setup routes
+app.use(cookieSession({
+  maxAge: 60 * 60 * 1000,
+  keys: [keys.session.cookieKey]
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// connect to mongodb
+mongoose.connect(keys.mongodb.dbURI, { useNewUrlParser: true }, () => {
+  console.log('connected to mongodb');
+});
+
+// set up routes
 app.use('/auth', authRoutes);
 
-app.get('/', (req, res)=>{
-  res.render('home')
-});
-app.get('/privacy', (req, res)=>{
-  res.render('privacy')
+// create home route
+app.get('/', (req, res) => {
+  res.render('home');
 });
 
-app.set('view engine', 'ejs');
-app.listen(PORT, ()=> console.log('listening'))
+app.listen(PORT, () => {
+  console.log('app now listening for requests on port 3000');
+});
