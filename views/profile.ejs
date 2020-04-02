@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>OAuth</title>
+  <title>Login</title>
   <style>
     body {
       font-family: arial;
@@ -43,6 +43,14 @@
       padding: 0 10px;
       color: #333;
     }
+
+    .google-btn {
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 10px;
+      background: #ff5353;
+    }
   </style>
 </head>
 
@@ -58,13 +66,11 @@
       <li><a href="/profile">Profile</a></li>
     </ul>
   </nav>
-  </nav>
   <header>
-    <h1>Node.js & Google+ OAuth Boilerplate</h1>
-    <h2>Homepage</h2>
+    <h1>Welcome <%= user.username%></h1>
   </header>
   <main>
-    <p>The best thing about a boolean is even if you are wrong, you are only off by a bit.</p>
+    <img src="<%= user.thumbnail %>" />
   </main>
 </body>
 

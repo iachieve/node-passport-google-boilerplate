@@ -4,40 +4,38 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const express = require('express');
-const authRoutes = require('./routes/auth-routes');
-const passportSetup = require('./config/passport-setup');
-const mongoose = require('mongoose');
-const keys = require('./config/keys_dev');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
+const authRoutes = require('./routes/auth-routes');
+const profileRoutes = require('./routes/profile-routes');
+const passportSetup = require('./config/passport-setup');
+const mongoose = require('mongoose');
+
 const app = express();
 
-// set view engine
 app.set('view engine', 'ejs');
 
 app.use(cookieSession({
-  maxAge: 60 * 60 * 1000,
-  keys: [keys.session.cookieKey]
+  maxAge: 24 * 60 * 60 * 1000,
+  keys: [process.env.SESSION_COOKIE_KEY]
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// connect to mongodb
-mongoose.connect(keys.mongodb.dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('connected to mongodb');
-  })
-  .catch(err => console.log(err));
-mongoose.set('useCreateIndex', true);
 
+mongoose.connect(process.env.MONGO_URI, 
+  { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => { console.log('connected to mongodb'); })
+  .catch(err => console.log('==> db network failure', err))
 
 // set up routes
 app.use('/auth', authRoutes);
+app.use('/profile', profileRoutes);
 
 // create home route
 app.get('/', (req, res) => {
-  res.render('home');
+  res.render('home', {user: req.user});
 });
 
 app.listen(PORT, () => {
