@@ -1,4 +1,4 @@
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
@@ -36,6 +36,11 @@ app.use('/profile', profileRoutes);
 // create home route
 app.get('/', (req, res) => {
   res.render('home', {user: req.user});
+});
+
+
+app.get('*', (req, res) => {
+  res.render('404');
 });
 
 app.listen(PORT, () => {
